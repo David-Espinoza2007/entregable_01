@@ -104,10 +104,6 @@ Este documento explica, punto por punto, los 11 elementos que pide el protocolo 
 > - Comisión Nacional del Agua. (2024). *Estadísticas del agua en México*. CONAGUA.
 > - Espressif Systems. (2023). *ESP32 Series Datasheet*. https://www.espressif.com
 
-## Nota sobre resultados y conclusiones preliminares
-
-Como ya se había señalado al revisar los riesgos de participar en la FECI, el cierre de la convocatoria (13 de noviembre) cae antes del cierre del reto con SYSCOM (4 de diciembre), así que al momento de registrar el anteproyecto el prototipo probablemente no esté terminado. En las secciones IX y X conviene dejar explícito que se trata de resultados y conclusiones preliminares, obtenidos hasta la fecha de registro, y no de resultados finales del reto completo. Si hay duda sobre si esto es aceptado, vale la pena confirmarlo directamente con el Instituto de Innovación y Competitividad antes del cierre de la convocatoria.
-
 ## Rúbrica de evaluación del anteproyecto (antes de enviarlo a la FECI)
 
 Esta rúbrica es para revisar el anteproyecto con el equipo antes de subirlo a la plataforma, usando los mismos criterios con los que después lo verán los evaluadores de la FECI (habilidades de investigación, comprensión del fenómeno o problema, manejo de información y comunicación).
