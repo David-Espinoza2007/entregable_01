@@ -1,65 +1,78 @@
-# Guía de registro del proyecto FECI (punto 3.1 de la convocatoria)
+# Monitoreo de cadena de frío de vacunas con LoRaWAN
 
-Este documento explica, punto por punto, los 11 elementos que pide el protocolo de registro de la FECI Chihuahua 2026 (sección 3.1 de la convocatoria), con una explicación de qué espera cada sección y un ejemplo de cómo llenarla.
+**Equipo:** (nombres de los integrantes)
 
-**Proyecto de referencia usado en los ejemplos:** sistema de IoT para monitoreo de agua en parcelas agrícolas (humedad del suelo y nivel de agua disponible, con alertas de riego en tiempo real). Es un proyecto de categoría Ingenierías, Sistemas Informáticos (Sistemas embebidos), así que en los ejemplos se llena la sección VIII (Ejecución y construcción) en vez de la VII (Hipótesis, que es solo para Proyectos de Ciencias).
+**Categoría:** Ingenierías, Sistemas Informáticos (Sistemas embebidos / IoT)
 
 ## I. Introducción
 
-**Qué pide:** una presentación breve del tema, el contexto general y de qué trata el proyecto, para que cualquier lector entienda de inmediato el panorama antes de entrar en detalles.
+Las vacunas deben guardarse entre +2 °C y +8 °C. Si se calientan o se congelan, pierden su efecto, pero se ven igual que una vacuna buena. En los centros de salud, la temperatura del refrigerador se revisa a mano solo dos veces al día. Si el refrigerador falla de noche o en fin de semana, nadie se entera a tiempo.
 
-**Ejemplo:**
-
-> El agua para riego agrícola es uno de los recursos más limitados en el estado de Chihuahua, y gran parte de las parcelas de la región siguen usando criterios manuales o intuitivos para decidir cuándo y cuánto riego aplicar. Este proyecto presenta el diseño e implementación de un sistema de Internet de las Cosas (IoT) capaz de medir en tiempo real la humedad del suelo y el nivel de agua disponible en una parcela, y de enviar alertas automáticas al productor cuando es necesario regar, con el fin de reducir el desperdicio de agua sin afectar el rendimiento del cultivo.
+Este proyecto es un sistema de Internet de las Cosas (IoT) que vigila las 24 horas la temperatura, la puerta y la energía eléctrica de un refrigerador de vacunas. Usa sensores LoRaWAN de batería que siguen funcionando durante un apagón. Cuando detecta un problema, avisa al personal y, si nadie responde, avisa a la siguiente persona responsable.
 
 ## II. Antecedentes
 
-**Qué pide:** qué se sabe ya sobre el tema, qué se ha hecho antes (por otros investigadores, empresas o en la literatura) y qué datos o estudios previos sustentan el proyecto. Si es un proyecto de continuidad de uno anterior, aquí se declara.
+- **Cómo se hace hoy en México.** La NOM-036-SSA2-2012 y el Manual de Vacunación piden mantener las vacunas entre +2 °C y +8 °C y registrar la temperatura dos veces al día, al inicio y al final de la jornada. Esto deja unas 16 horas sin vigilancia cada noche y más de 60 horas cada fin de semana.
+- **Normas internacionales.** La OMS define alarmas para registradores de temperatura de refrigeradores de vacunas: calor a +8 °C o más durante 10 horas, y congelamiento a −0.5 °C o menos durante 60 minutos. El congelamiento se considera más urgente.
+- **Nexleaf ColdTrace (Kenia y otros países).** Sensores con conexión celular que mandan SMS cuando la temperatura sale de rango o se va la luz. En Kilifi, Kenia, estas alertas ayudaron a salvar unas 2,000 dosis durante un apagón. Nexleaf estima que el 55% de los centros de salud dependen de refrigeradores que funcionan mal o no funcionan. Su limitación: cada refrigerador necesita su propia SIM y plan de datos, y un SMS no garantiza que alguien actúe.
+- **eVIN (India).** Sistema nacional que monitorea temperatura e inventario en más de 29 mil puntos de cadena de frío. Un estudio de campo encontró registradores que dejaron de transmitir por semanas sin que nadie lo notara, mala conectividad y doble registro en papel y en el sistema.
 
-**Ejemplo:**
+Fuentes: [Manual de Procedimientos Técnicos de Vacunación](https://salud.gob.mx/unidades/cdi/documentos/DOCSAL7301.pdf), [OMS PQS E006/TR06.3](https://extranet.who.int/prequal/key-resources/documents/pqs-performance-specification-e006tr063-30-day-electronic-refrigerator), [Nexleaf](https://www.nexleaf.org/work/vaccines/), [UNDP – eVIN](https://www.undp.org/india/projects/improving-vaccination-systems-evin), [estudio de campo de eVIN](https://pmc.ncbi.nlm.nih.gov/articles/PMC13450870/).
 
-> Según datos de la Comisión Nacional del Agua, el sector agrícola consume más del 75% del agua disponible en el estado de Chihuahua, y buena parte de ese volumen se pierde por riego excesivo o mal programado. Existen soluciones comerciales de riego inteligente (como sensores de humedad conectados a controladores de riego), pero su costo las hace poco accesibles para productores de pequeña y mediana escala. En el ámbito académico, diversos estudios de agricultura de precisión muestran que el monitoreo continuo de humedad del suelo puede reducir el consumo de agua entre 20% y 40% sin afectar el rendimiento del cultivo. Este proyecto no es de continuidad: es un desarrollo nuevo basado en esos antecedentes.
+Este proyecto no es de continuidad. Es un desarrollo nuevo que toma estos antecedentes y busca resolver lo que les falta: conectividad barata para muchos refrigeradores, detectar sensores que dejan de reportar y asegurar que alguien atienda la alerta.
 
-## III. Definición del problema de investigación o meta de ingeniería
+## III. Definición del problema o meta de ingeniería
 
-**Qué pide:** para un proyecto de Ingenierías (como este), no se plantea una pregunta de investigación sino una meta de ingeniería: qué se quiere diseñar, construir o resolver de forma concreta, y bajo qué restricciones.
+**Problema:** en los centros de salud, nadie vigila los refrigeradores de vacunas fuera del horario laboral. Si hay un apagón, la puerta queda abierta o el refrigerador falla de noche, las vacunas pueden dañarse sin que nadie se entere.
 
-**Ejemplo:**
+**Meta de ingeniería:** diseñar y construir un prototipo funcional con equipo LoRaWAN Milesight que:
 
-> Meta de ingeniería: diseñar y construir un prototipo funcional de bajo costo, basado en sensores de humedad de suelo y nivel de agua conectados a un microcontrolador con conexión a internet, que capture datos en tiempo real, los almacene en una base de datos, y genere alertas automáticas de riego visibles en un tablero de visualización, con un costo de implementación menor a $1,500 MXN por unidad de monitoreo.
+- mida la temperatura de un refrigerador de vacunas de forma continua, con un error máximo de ±0.5 °C;
+- detecte corte de luz, puerta abierta, temperatura fuera de rango (+2 °C a +8 °C) y sensores que dejan de reportar;
+- envíe una alerta al celular del personal en menos de 2 minutos después de que se cumple la condición de alarma;
+- escale la alerta a la siguiente persona si nadie la confirma;
+- siga funcionando durante un apagón (sensores con batería).
 
 ## IV. Justificación
 
-**Qué pide:** por qué vale la pena hacer este proyecto, a quién beneficia y qué relevancia tiene (social, ambiental, económica, tecnológica).
-
-**Ejemplo:**
-
-> Este proyecto es relevante porque atiende dos problemas simultáneos: la escasez de agua en el estado y la falta de herramientas accesibles de monitoreo para pequeños productores agrícolas. Un sistema de bajo costo que indique con precisión cuándo regar permite un uso más eficiente del agua, reduce costos de operación para el productor, y contribuye directamente a los Objetivos de Desarrollo Sostenible relacionados con agua limpia y saneamiento (ODS 6) y producción agrícola sostenible (ODS 2).
+- **Salud:** una vacuna dañada no protege, y no se nota a simple vista. Vigilar el refrigerador todo el tiempo asegura que la vacuna que se aplica sí funcione.
+- **Personal de salud:** hoy una persona carga con la responsabilidad de un refrigerador que no puede vigilar de noche. El sistema le avisa a tiempo y deja registro de qué pasó, para que las decisiones se tomen con datos.
+- **Equidad:** las clínicas rurales tienen más apagones y menos recursos. LoRaWAN no necesita WiFi, los sensores funcionan con batería y un solo gateway cubre varios refrigeradores o clínicas cercanas.
+- **Escalabilidad:** el mismo sistema sirve para bancos de sangre, laboratorios, farmacias, restaurantes y transporte refrigerado, cambiando solo los umbrales.
+- **ODS:** contribuye al ODS 3 (Salud y bienestar).
 
 ## V. Objetivos
 
-**Qué pide:** el objetivo general del proyecto y los objetivos específicos (los pasos o componentes concretos que, juntos, cumplen el objetivo general).
+**Objetivo general:** desarrollar un sistema IoT con LoRaWAN que monitoree las 24 horas la temperatura, la puerta y la energía eléctrica de un refrigerador de vacunas, y que avise a tiempo al personal responsable para evitar que las vacunas se dañen.
 
-**Nota:** un error común es confundir los objetivos con los pasos para construir el sistema (eso corresponde a la Metodología y a la Ejecución y construcción, secciones VI y VIII). Un objetivo describe qué se quiere lograr o comprobar, de forma medible, no qué se va a hacer para llegar ahí.
+**Objetivos específicos:**
 
-**Ejemplo:**
-
-> **Objetivo general:** desarrollar un sistema de IoT que monitoree en tiempo real la humedad del suelo y el nivel de agua disponible en una parcela agrícola, y que notifique automáticamente al productor cuándo es necesario regar.
->
-> **Objetivos específicos:**
-> 1. Lograr una medición de humedad del suelo y nivel de agua con un margen de error menor al 10% respecto a mediciones de referencia tomadas manualmente.
-> 2. Mantener el tablero de visualización y el flujo de datos en tiempo real con una disponibilidad de al menos 95% durante el periodo de prueba.
-> 3. Generar alertas de riego que coincidan con el criterio de riego recomendado para el cultivo de referencia, con al menos 12 horas de anticipación.
-> 4. Reducir el consumo de agua de riego en al menos 15% respecto a un esquema de riego por calendario fijo, en la parcela piloto donde se pruebe el sistema.
-> 5. Operar el sistema de forma autónoma (alimentado por panel solar) durante al menos una semana sin intervención manual.
+1. Medir la temperatura con un error máximo de ±0.5 °C respecto a un termómetro de referencia.
+2. Enviar la alerta de corte de luz, puerta abierta y temperatura fuera de rango en menos de 2 minutos en al menos el 95% de las pruebas.
+3. Escalar la alerta al siguiente responsable en el tiempo configurado (10 minutos) en el 100% de las pruebas donde nadie la confirma.
+4. Detectar un sensor que dejó de reportar en menos de 30 minutos.
+5. Registrar automáticamente al menos el 99% de las lecturas durante 7 días de operación continua.
 
 ## VI. Metodología
 
-**Qué pide:** cómo se va a desarrollar el proyecto, paso a paso: el proceso de diseño, las técnicas, herramientas y criterios que se van a seguir para llegar a los objetivos.
+El proyecto se desarrolla en cinco etapas:
 
-**Ejemplo:**
+1. **Validación del problema.** Entrevistar a personal de un centro de salud o farmacia para confirmar cómo se vigilan hoy los refrigeradores y qué pasa cuando fallan. Revisar la NOM-036-SSA2-2012 y el Manual de Vacunación para definir los rangos de temperatura y los tiempos de alarma.
+2. **Selección y prueba de equipo.** Probar cada componente por separado:
+   - sensor de temperatura TS302 con sonda PT100 dentro de un frasco con glicol, que imita la temperatura real de la vacuna y evita falsas alarmas al abrir la puerta;
+   - contacto magnético SS21 para la puerta;
+   - sensor EM300-DI con un relevador de 127 V para detectar el corte de luz;
+   - gateway UG65.
 
-> El proyecto se desarrolla en cinco etapas. Primero, un análisis de requerimientos para definir qué variables medir (humedad de suelo, nivel de agua) y con qué frecuencia. Segundo, la selección y prueba individual de sensores y actuadores (sensor de humedad capacitivo, sensor de nivel de agua, microcontrolador con conectividad Wi-Fi). Tercero, el diseño de la base de datos (modelo entidad-relación) y su conexión con el microcontrolador para capturar los datos en tiempo real. Cuarto, el desarrollo del tablero de visualización con los indicadores clave y la lógica de alertas. Quinto, la validación integral del sistema mediante pruebas de campo en una parcela piloto durante un periodo de al menos dos semanas, comparando las lecturas del sistema contra mediciones manuales tomadas con un medidor de humedad de referencia.
+   Se eligió LoRaWAN porque los sensores funcionan con batería, siguen transmitiendo durante un apagón, no necesitan WiFi y un solo gateway recibe a todos.
+3. **Integración.** Conectar los sensores al gateway y el gateway a la plataforma en la nube (Milesight Development Platform, o el servidor LoRaWAN del propio gateway por MQTT/HTTP). Verificar que los datos lleguen completos y con la hora correcta.
+4. **Alertas y escalamiento.** Programar las reglas de alarma con los umbrales de la etapa 1, el envío de mensajes al celular y el escalamiento: enfermera, director, velador y jurisdicción, hasta que alguien confirme.
+5. **Validación.** Probar el sistema en un mini refrigerador:
+   - comparar las lecturas contra un termómetro de referencia (objetivo 1);
+   - simular apagones, puertas abiertas y temperaturas fuera de rango, y medir el tiempo de cada alerta (objetivo 2);
+   - dejar alertas sin confirmar para medir el escalamiento (objetivo 3);
+   - apagar un sensor para comprobar que se detecta (objetivo 4);
+   - operar el sistema 7 días seguidos y contar las lecturas registradas (objetivo 5).
 
 ## VII. Hipótesis (solo para Proyectos de Ciencias)
 
