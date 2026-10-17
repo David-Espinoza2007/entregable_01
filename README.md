@@ -1,6 +1,6 @@
 # Monitoreo de cadena de frío de vacunas con LoRaWAN
 
-**Equipo:** (nombres de los integrantes)
+**Equipo:** David Arturo Espinoza López, Alan Yael Soto Banda, Alejandra García Barrio
 
 **Categoría:** Ingenierías, Sistemas Informáticos (Sistemas embebidos / IoT)
 
