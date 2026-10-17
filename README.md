@@ -6,20 +6,20 @@
 
 ## I. Introducción
 
-Las vacunas deben guardarse entre +2 °C y +8 °C. Si se calientan o se congelan, pierden su efecto, pero se ven igual que una vacuna buena. En los centros de salud, la temperatura del refrigerador se revisa a mano solo dos veces al día. Si el refrigerador falla de noche o en fin de semana, nadie se entera a tiempo.
+Las vacunas deben guardarse en ambientes de 2—8 °C. Si se calientan o se congelan, pierden su efecto, pero se ven igual que una vacuna buena. En los centros de salud, la temperatura del refrigerador se revisa a mano solo dos veces al día. Si el refrigerador falla de noche o en fin de semana, nadie se entera a tiempo.
 
-Este proyecto es un sistema de Internet de las Cosas (IoT) que vigila las 24 horas la temperatura, la puerta y la energía eléctrica de un refrigerador de vacunas. Usa sensores LoRaWAN de batería que siguen funcionando durante un apagón. Cuando detecta un problema, avisa al personal y, si nadie responde, avisa a la siguiente persona responsable.
+Este proyecto es un sistema de Internet de las Cosas que vigila las 24 horas la temperatura, la puerta y la energía eléctrica de un refrigerador de vacunas. Usa sensores LoRaWAN de batería que siguen funcionando durante un apagón. Cuando detecta un problema, avisa al personal y, si nadie responde, avisa a la siguiente persona responsable.
 
 ## II. Antecedentes
 
-- **Cómo se hace hoy en México.** La NOM-036-SSA2-2012 y el Manual de Vacunación piden mantener las vacunas entre +2 °C y +8 °C y registrar la temperatura dos veces al día, al inicio y al final de la jornada. Esto deja unas 16 horas sin vigilancia cada noche y más de 60 horas cada fin de semana.
-- **Normas internacionales.** La OMS define alarmas para registradores de temperatura de refrigeradores de vacunas: calor a +8 °C o más durante 10 horas, y congelamiento a −0.5 °C o menos durante 60 minutos. El congelamiento se considera más urgente.
+- **Cómo se hace hoy en México.** La NOM-036-SSA2-2012 y el Manual de Vacunación piden mantener las vacunas de 2—8 °C y registrar la temperatura dos veces al día, al inicio y al final de la jornada. Esto deja unas 16 horas sin vigilancia cada noche y más de 60 horas cada fin de semana.
+- **Normas internacionales.** La OMS define alarmas para registradores de temperatura de refrigeradores de vacunas: calor a 8 °C o más durante 10 horas, y congelamiento a −0.5 °C o menos durante 60 minutos. El congelamiento se considera más urgente.
 - **Nexleaf ColdTrace (Kenia y otros países).** Sensores con conexión celular que mandan SMS cuando la temperatura sale de rango o se va la luz. En Kilifi, Kenia, estas alertas ayudaron a salvar unas 2,000 dosis durante un apagón. Nexleaf estima que el 55% de los centros de salud dependen de refrigeradores que funcionan mal o no funcionan. Su limitación: cada refrigerador necesita su propia SIM y plan de datos, y un SMS no garantiza que alguien actúe.
 - **eVIN (India).** Sistema nacional que monitorea temperatura e inventario en más de 29 mil puntos de cadena de frío. Un estudio de campo encontró registradores que dejaron de transmitir por semanas sin que nadie lo notara, mala conectividad y doble registro en papel y en el sistema.
 
 Fuentes: [Manual de Procedimientos Técnicos de Vacunación](https://salud.gob.mx/unidades/cdi/documentos/DOCSAL7301.pdf), [OMS PQS E006/TR06.3](https://extranet.who.int/prequal/key-resources/documents/pqs-performance-specification-e006tr063-30-day-electronic-refrigerator), [Nexleaf](https://www.nexleaf.org/work/vaccines/), [UNDP – eVIN](https://www.undp.org/india/projects/improving-vaccination-systems-evin), [estudio de campo de eVIN](https://pmc.ncbi.nlm.nih.gov/articles/PMC13450870/).
 
-Este proyecto no es de continuidad. Es un desarrollo nuevo que toma estos antecedentes y busca resolver lo que les falta: conectividad barata para muchos refrigeradores, detectar sensores que dejan de reportar y asegurar que alguien atienda la alerta.
+Este proyecto es un desarrollo nuevo que toma estos antecedentes y busca resolver lo que les falta: conectividad barata para muchos refrigeradores, detectar sensores que dejan de reportar y asegurar que alguien atienda la alerta.
 
 ## III. Definición del problema o meta de ingeniería
 
@@ -27,8 +27,8 @@ Este proyecto no es de continuidad. Es un desarrollo nuevo que toma estos antece
 
 **Meta de ingeniería:** diseñar y construir un prototipo funcional con equipo LoRaWAN Milesight que:
 
-- mida la temperatura de un refrigerador de vacunas de forma continua, con un error máximo de ±0.5 °C;
-- detecte corte de luz, puerta abierta, temperatura fuera de rango (+2 °C a +8 °C) y sensores que dejan de reportar;
+- mida la temperatura de un refrigerador de vacunas de forma continua, con un error máximo de +-0.5 °C;
+- detecte corte de luz, puerta abierta, temperatura fuera de rango (2—8 °C) y sensores que dejan de reportar;
 - envíe una alerta al celular del personal en menos de 2 minutos después de que se cumple la condición de alarma;
 - escale la alerta a la siguiente persona si nadie la confirma;
 - siga funcionando durante un apagón (sensores con batería).
@@ -47,7 +47,7 @@ Este proyecto no es de continuidad. Es un desarrollo nuevo que toma estos antece
 
 **Objetivos específicos:**
 
-1. Medir la temperatura con un error máximo de ±0.5 °C respecto a un termómetro de referencia.
+1. Medir la temperatura con un error máximo de +-0.5 °C respecto a un termómetro de referencia.
 2. Enviar la alerta de corte de luz, puerta abierta y temperatura fuera de rango en menos de 2 minutos en al menos el 95% de las pruebas.
 3. Escalar la alerta al siguiente responsable en el tiempo configurado (10 minutos) en el 100% de las pruebas donde nadie la confirma.
 4. Detectar un sensor que dejó de reportar en menos de 30 minutos.
@@ -76,7 +76,7 @@ El proyecto se desarrolla en cinco etapas:
 
 ## VII. Hipótesis (solo para Proyectos de Ciencias)
 
-**Qué pide:** esta sección se llena únicamente si el proyecto está registrado en la modalidad de Ciencias, donde se plantea una afirmación comprobable sobre una relación entre variables. En un proyecto de Ingenierías, como este, **no se llena esta sección**: en su lugar se usa la sección VIII.
+Esta sección no se llena ya que el proyecto no está registrado en la modalidad de Ciencias, 
 
 **Ejemplo de qué se vería si fuera de Ciencias (solo como referencia, no aplica aquí):**
 
